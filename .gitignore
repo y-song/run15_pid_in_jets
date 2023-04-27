@@ -1,0 +1,12 @@
+*.simg
+*.root
+bad.csv
+bin/
+err
+local.sh
+out/
+plots/
+src/obj/
+test.list
+test_input/
+trash/
