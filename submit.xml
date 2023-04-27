@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<job maxFilesPerProcess="1" fileListSyntax="xrootd">
+ 
+<input URL="catalog:star.bnl.gov?filetype=daq_reco_picoDst,production=P16id,trgsetupname=production_pp200trans_2015,filename~st_physics,storage!=hpss" singleCopy="true" nFiles="5000" />
+   
+  <command>
+    starver SL19c
+    cons
+    singularity exec -B /tmp -B /gpfs01/star/pwg/youqi/run15 star_star.simg bash /gpfs01/star/pwg/youqi/run15/container.sh
+    mv /star/u/youqi/results/$JOBID.root /gpfs01/star/pwg/youqi/run15/result/.
+  </command>
+ 
+  <SandBox installer="ZIP">
+    <Package>
+      <File>file:./bin/jets</File>
+      <File>file:./star_star.simg</File>
+      <File>file:./container.sh</File>
+      <File>file:./setup.sh</File>
+      <File>file:./bad.csv</File> 
+   </Package>
+  </SandBox>
+
+  <stdout URL="file:./$JOBID.out"/>
+  <stderr URL="file:./$JOBID.err"/>
+ 
+</job>
+
