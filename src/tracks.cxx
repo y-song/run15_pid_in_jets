@@ -85,7 +85,7 @@ int main(int argc, const char **argv)
     // setup tracks
     reader.trackSelector()->setPtMax(30.0);
     reader.trackSelector()->setPtMin(2.0);
-    reader.trackSelector()->rejectEventOnPtFailure(false);
+    reader.trackSelector()->rejectEventOnPtFailure(true);
     reader.trackSelector()->setDcaMax(trackDCACut);
     reader.trackSelector()->setNHitsMin(trackNhitCut);
     reader.trackSelector()->setNHitsFracMin(trackNhitFracCut);
@@ -154,7 +154,9 @@ int main(int argc, const char **argv)
             jetreader::TrackStatus track_status = reader.trackSelector()->select(track, vertex, use_primary_tracks_);
             if (track_status != jetreader::TrackStatus::acceptTrack)
                 continue;
-    
+            if (track->pMom().Eta() > 1. || track->pMom().Eta() < -1.)
+                continue;
+                
             pt = track->pPt();
             eta = track->pMom().Eta();
             phi = track->pMom().Phi();
