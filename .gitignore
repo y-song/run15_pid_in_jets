@@ -1,5 +1,8 @@
 *.simg
 *.root
+*.err
+*.out
+sched*
 bad.csv
 bin/
 err
