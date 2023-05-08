@@ -9,6 +9,7 @@ err
 local.sh
 out/
 plots/
+result/
 src/obj/
 test.list
 test_input/
