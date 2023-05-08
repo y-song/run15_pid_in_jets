@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<job maxFilesPerProcess="1" fileListSyntax="xrootd">
+<job minFilesPerProcess="20" fileListSyntax="xrootd">
  
-<input URL="catalog:star.bnl.gov?filetype=daq_reco_picoDst,production=P16id,trgsetupname=production_pp200trans_2015,filename~st_physics,storage!=hpss" singleCopy="true" nFiles="5000" />
+<input URL="catalog:star.bnl.gov?filetype=daq_reco_picoDst,production=P16id,trgsetupname=production_pp200trans_2015,filename~st_physics,storage!=hpss" singleCopy="true" nFiles="all"/>
    
   <command>
     starver SL19c
@@ -14,6 +14,7 @@
   <SandBox installer="ZIP">
     <Package>
       <File>file:./bin/jets</File>
+      <File>file:./bin/tracks</File>
       <File>file:./star_star.simg</File>
       <File>file:./container.sh</File>
       <File>file:./setup.sh</File>
