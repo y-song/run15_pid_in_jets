@@ -1,4 +1,4 @@
-void analyze_tree()
+void analyze_jet_tree() // needs to be run within the container
 {
     // create pT bins
     const int nbin = 16;
@@ -16,7 +16,7 @@ void analyze_tree()
     TH2::SetDefaultSumw2();
     gStyle->SetOptStat(11);
 
-    TObjArray trackm2_tracknspi;
+    /*TObjArray trackm2_tracknspi;
     TObjArray tracknspi;
     TObjArray tracknspi_fits;
 
@@ -31,7 +31,11 @@ void analyze_tree()
     TH1F *h_tracknspi = new TH1F("h_tracknspi", ";track nsigmapi", 50, -5, 5);
     TH2F *h_pt_nsknspidiff = new TH2F("h_pt_nsknspidiff", ";track p_{T} [GeV];track (nsigmaK - nsigmapi)", nbin, pt_min, pt_max, 60, 0, 3);
     TH2F *h_pt_m2 = new TH2F("h_pt_m2", ";track p_{T} [GeV];track M^{2} [GeV^{2}]", 2*nbin, 0, pt_max/2, 100, -0.5, 1.5);
-    TH2F *h_trackm2_tracknspi = new TH2F("h_trackm2_tracknspi", ";track M^{2} [GeV^{2}];track nsigmapi", 75, -1, 2, 100, -5, 5);
+    TH2F *h_trackm2_tracknspi = new TH2F("h_trackm2_tracknspi", ";track M^{2} [GeV^{2}];track nsigmapi", 75, -1, 2, 100, -5, 5);*/
+
+    TH1F *h_leading_pt = new TH1F("h", ";leading track p_{T} [GeV]", 30, 0, 30);
+    TH1F *h_subleading_pt = new TH1F("h_subleading_pt", ";subleading track p_{T} [GeV]", 30, 0, 30);
+    TH2F *h_leading_pt_subleading_pt = new TH2F("h_leading_subleading", ";leading track p_{T} [GeV];subleading track p_{T} [GeV]", 30, 0, 30, 30, 0, 30);
 
     TFile *f = new TFile("result/jets_0428.root");
     TTree *t = (TTree *)f->Get("jets");
@@ -56,13 +60,20 @@ void analyze_tree()
     t->SetBranchAddress("q", q);
 
     int njet = t->GetEntries();
+    cout << "number of jets: " << njet << endl;
+
     for (int ijet = 0; ijet < njet; ijet++)
     {
-        t->GetEntry(ijet);
 
-        for (int itrack = 0; itrack < mult_j; itrack++)
-        {
-            for (int ibin = 0; ibin < nbin; ibin++)
+        t->GetEntry(ijet);
+        
+        vector<Double_t> pt_vector(pt, pt + mult_j);
+
+        //for (int itrack = 0; itrack < mult_j; itrack++)
+        //{
+            //pt_vector.push_back(pt[itrack]);
+            
+            /*for (int ibin = 0; ibin < nbin; ibin++)
             {
                 if (pt_bin[ibin] < pt[itrack] && pt[itrack] < pt_bin[ibin + 1])
                 {
@@ -73,18 +84,39 @@ void analyze_tree()
             h_trackm2->Fill(m2[itrack]);
             h_pt_nsknspidiff->Fill(pt[itrack], nsk[itrack] - nspi[itrack]);
             h_pt_m2->Fill(pt[itrack], m2[itrack]);
-            h_trackm2_tracknspi->Fill(m2[itrack], nspi[itrack]);
+            h_trackm2_tracknspi->Fill(m2[itrack], nspi[itrack]);*/
+        //}
+
+        sort(pt_vector.begin(), pt_vector.end(), greater<Double_t>()); // sort needs to be run within the container
+        if (pt_vector.size() >= 2)
+        {
+            h_leading_pt->Fill(pt_vector.at(0));
+            h_subleading_pt->Fill(pt_vector.at(1));
+            h_leading_pt_subleading_pt->Fill(pt_vector.at(0), pt_vector.at(1));
         }
+
     }
 
-    //TCanvas *c = new TCanvas("c", "c");
+    TCanvas *c = new TCanvas("c", "c");
 
-    //gPad->SetLogy(1);
+    gPad->SetLogy(1);
     //h_trackm2->Draw();
     //h_pt_nsknspidiff->Draw("colz");
     //h_pt_nsknspidiff->ProfileX()->Draw("same");
-    h_pt_m2->Draw("colz");
+    //h_pt_m2->Draw("colz");
     //h_trackm2_tracknspi->Draw("colz");
+    h_leading_pt->Draw();
+    h_subleading_pt->Draw("same");
+
+    h_leading_pt->GetXaxis()->SetTitle("track p_{T} [GeV]");
+    h_leading_pt->GetYaxis()->SetRangeUser(1., 50000.);
+    h_leading_pt->SetLineColor(1);
+    h_subleading_pt->SetLineColor(4);
+    c->SaveAs("plots/track_pt.png", "png");
+
+    gPad->SetLogy(0);
+    h_leading_pt_subleading_pt->Draw("colz");
+    c->SaveAs("plots/track_pt_2d.png", "png");
 
     /*vector<Double_t> nsknspidiff;
     for (int ibin = 0; ibin < nbin; ibin++)
